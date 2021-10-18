@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import F,Sum
 from django.utils.translation import ugettext_lazy as _
 
 from ingredient.models import Ingredient
@@ -20,15 +21,12 @@ class ShoppingList(models.Model):
         verbose_name = _("Shopping List")
         verbose_name_plural = _("Shopping Lists")
 
-    def calculate_cost(self):
+
+    def calculate_cost(self,queryset):
         # Calculate the total cost of the shopping list
-        total_cost = 0
-        # for each in list:
-        shopping_items = ShoppingListItem.objects.filter(shopping_list=self.id)
-        for each in shopping_items:
-            ingredient = Ingredient.objects.filter(name=each.ingredient)
-            total_cost = total_cost + int(each.quantity) * int(ingredient[0].cost_per_unit)
-        return total_cost
+
+        shopping_item = ShoppingListItem.objects.filter(shopping_list=queryset.id).annotate(progress=F('quantity') * F('ingredient__cost_per_unit')).aggregate(progress_sum=Sum('progress'))
+        return shopping_item['progress_sum']
 
 
 class ShoppingListItem(models.Model):
@@ -41,7 +39,7 @@ class ShoppingListItem(models.Model):
     )
 
     ingredient = models.ForeignKey(
-        Ingredient, verbose_name=_("Ingredient"), on_delete=models.SET_NULL, null=True,
+        Ingredient, verbose_name=_("Ingredient"), on_delete=models.SET_NULL, null=True, limit_choices_to={'is_available':'True'}
     )
 
     quantity = models.FloatField(_("Quantity"))

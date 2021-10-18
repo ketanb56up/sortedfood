@@ -7,13 +7,15 @@ UNITS = (("g", "g"), ("ml", "ml"), ("tsp", "tsp"), ("tbsp", "tbsp"))
 
 
 class Ingredient(models.Model):
-    name = models.CharField(_("Ingredient"), max_length=250)
+    name = models.CharField(_("Ingredient"), max_length=250, unique=True)
 
     category = models.CharField(choices=CATEGORIES, max_length=64)
 
     unit = models.CharField(choices=UNITS, max_length=64)
 
     cost_per_unit = models.FloatField(_("Cost Per Unit"), null=True, blank=True)
+
+    is_available = models.BooleanField(blank=True,null=True,default=True)
 
 
     def __str__(self):

@@ -5,6 +5,7 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 
+# router for Ingredient API's
 router.register('', IngredientViewSet, basename='ingredient')
 
 

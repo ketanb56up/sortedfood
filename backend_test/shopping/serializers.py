@@ -10,8 +10,8 @@ class ShoppingListModelSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ShoppingListItemModelSerializer(serializers.ModelSerializer):
-    ingredient = serializers.CharField(source='ingredient.name')
-    shopping_list = serializers.CharField(source='shopping_list.title')
+    # ingredient = serializers.CharField(source='ingredient.name')
+    # shopping_list = serializers.CharField(source='shopping_list.title')
 
     class Meta:
         model = ShoppingListItem
